@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Clustering</title>
+    <style>
+    .high { color: green; font-weight: bold; }
+    .medium { color: orange; font-weight: bold; }
+    .low { color: red; font-weight: bold; }
+    </style>
+    <style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f5f7fa;
+    }
+
+    .container {
+        width: 90%;
+        margin: auto;
+    }
+
+    h2 {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    thead {
+        background: #2c3e50;
+        color: white;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+    }
+
+    tbody tr:hover {
+        background: #f1f1f1;
+    }
+
+    .low {
+        color: red;
+        font-weight: bold;
+    }
+
+    .medium {
+        color: orange;
+        font-weight: bold;
+    }
+
+    .high {
+        color: green;
+        font-weight: bold;
+    }   
+</style>
+</head>
+<body>
+<div class="container"></div>
+<h2>Customer Clustering</h2>
+
+<!-- TABLE -->
+<table>
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Total Spent</th>
+            <th>Frequency</th>
+            <th>Cluster</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for row in results %}
+        <tr>
+            <td>{{ row.customer_name }}</td>
+            <td>₱ {{ row.total_spent|floatformat:2 }}</td>
+            <td>{{ row.transactions }}</td>
+
+            <td>
+                {% if row.cluster == "High Value" %}
+                    <span class="high">🟢 High Value</span>
+                {% elif row.cluster == "Medium Value" %}
+                    <span class="medium">🟠 Medium Value</span>
+                {% else %}
+                    <span class="low">🔴 Low Value</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- CHART -->
+<canvas id="clusterChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const data = JSON.parse('{{ chart_data|escapejs }}');
+
+    const labels = data.map(d => d.customer);
+    const values = data.map(d => d.total_spent);
+
+    const ctx = document.getElementById('clusterChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Spent',
+                data: values
+            }]
+        }
+    });
+</script>
+</div>
+</body>
+</html>
