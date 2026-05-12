@@ -24,3 +24,4 @@ sqlparse==0.5.5
 statsmodels==0.14.6
 threadpoolctl==3.6.0
 tzdata==2026.2
+gunicorn
